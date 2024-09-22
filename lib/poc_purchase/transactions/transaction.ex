@@ -3,9 +3,7 @@ defmodule PocPurchase.Transactions.Transaction do
   import Ecto.Changeset
 
   alias PocPurchase.Orders.Order
-  # alias PocPurchase.Products.Product
   alias PocPurchase.Transactions.{Transaction, TransactionProduct}
-
 
   schema "transactions" do
     field :status, Ecto.Enum, values: [:active, :pending, :processed]

@@ -21,5 +21,5 @@ for i <- 1..10 do
   }
 
   Repo.insert!(product)
-  IO.puts "Inserted product: #{product.name}"
+  IO.puts("Inserted product: #{product.name}")
 end

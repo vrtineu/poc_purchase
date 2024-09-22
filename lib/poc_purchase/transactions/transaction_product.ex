@@ -13,10 +13,10 @@ defmodule PocPurchase.Transactions.TransactionProduct do
     timestamps(type: :utc_datetime)
   end
 
-    @doc false
-    def changeset(transaction_item, attrs) do
-      transaction_item
-      |> cast(attrs, [:quantity, :thirdparty_id])
-      |> validate_required([:quantity, :thirdparty_id])
-    end
+  @doc false
+  def changeset(transaction_item, attrs) do
+    transaction_item
+    |> cast(attrs, [:quantity, :thirdparty_id])
+    |> validate_required([:quantity, :thirdparty_id])
+  end
 end
