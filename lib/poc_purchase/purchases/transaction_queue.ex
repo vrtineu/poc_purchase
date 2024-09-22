@@ -4,7 +4,7 @@ defmodule PocPurchase.Purchases.TransactionQueue do
   require Logger
 
   def start_link(options) do
-    GenStage.start_link(__MODULE__, options, name: {:global, __MODULE__})
+    GenStage.start_link(__MODULE__, options, name: __MODULE__)
   end
 
   @impl true
@@ -36,13 +36,13 @@ defmodule PocPurchase.Purchases.TransactionQueue do
   def handle_cast({:new_event, event}, {queue, pending_demand}) do
     Logger.debug("Received new event: #{inspect(event)}")
 
-    new_queue = queue.in(:queue, event)
+    new_queue = :queue.in(event, queue)
     {events, new_queue, new_demand} = take_events_from_queue(new_queue, pending_demand, [])
     {:noreply, events, {new_queue, new_demand}}
   end
 
   defp take_events_from_queue(queue, demand, events) do
-    case queue.out(queue) do
+    case :queue.out(queue) do
       {{:value, event}, new_queue} ->
         take_events_from_queue(new_queue, demand - 1, [event | events])
 
