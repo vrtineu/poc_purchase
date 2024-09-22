@@ -17,7 +17,8 @@ defmodule PocPurchase.Application do
       # Start a worker by calling: PocPurchase.Worker.start_link(arg)
       # {PocPurchase.Worker, arg},
       # Start to serve requests, typically the last entry
-      PocPurchaseWeb.Endpoint
+      PocPurchaseWeb.Endpoint,
+      PocPurchase.Purchases.Supervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
