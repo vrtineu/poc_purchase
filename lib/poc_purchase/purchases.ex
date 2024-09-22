@@ -18,22 +18,30 @@ defmodule PocPurchase.Purchases do
   end
 
   def init_processors(id, transaction_products_params) do
-    Repo.transaction(fn ->
-      attrs = %{
-        status: :pending,
-        transaction_products: transaction_products_params
-      }
+    transaction = Transactions.get_transaction!(id)
 
-      with transaction <- Transactions.get_transaction!(id),
-           {:ok, transaction} <- Transactions.update_transaction(transaction, attrs) do
-        transaction = Repo.preload(transaction, :transaction_products)
-        TransactionQueue.add_event(transaction)
+    if transaction_can_be_processed?(transaction) do
+      Repo.transaction(fn ->
+        attrs = %{
+          status: :pending,
+          transaction_products: transaction_products_params
+        }
 
-        transaction
-      else
-        {:error, changeset} ->
-          Repo.rollback(changeset)
-      end
-    end)
+        case Transactions.update_transaction(transaction, attrs) do
+          {:ok, transaction} ->
+            transaction = Repo.preload(transaction, :transaction_products)
+            TransactionQueue.add_event(transaction)
+            transaction
+
+          {:error, changeset} ->
+            Repo.rollback(changeset)
+        end
+      end)
+    else
+      {:error, :already_processed}
+    end
   end
+
+  defp transaction_can_be_processed?(%Transaction{status: status}), do: status == :active
+  defp transaction_can_be_processed?(_), do: false
 end

@@ -21,12 +21,18 @@ defmodule PocPurchaseWeb.TransactionController do
   end
 
   def process(conn, %{"id" => id, "products" => transaction_products_params}) do
-    # TODO: Fix raise error when calling this route twice
-    with {:ok, transaction} <- Purchases.init_processors(id, transaction_products_params) do
-      conn
-      |> put_status(:ok)
-      |> put_resp_header("location", ~p"/api/transactions/#{id}")
-      |> render(:show, transaction: transaction)
+    case Purchases.init_processors(id, transaction_products_params) do
+      {:ok, transaction} ->
+        conn
+        |> put_status(:ok)
+        |> put_resp_header("location", ~p"/api/transactions/#{id}")
+        |> render(:show, transaction: transaction)
+
+      {:error, :already_processed} ->
+        conn
+        |> put_status(:precondition_failed)
+        |> put_view(PocPurchaseWeb.ErrorJSON)
+        |> render("412.json", %{error: "Transaction has already been processed"})
     end
   end
 end
