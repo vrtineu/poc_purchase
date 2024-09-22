@@ -7,6 +7,12 @@ defmodule PocPurchaseWeb.Router do
 
   scope "/api", PocPurchaseWeb do
     pipe_through :api
+
+    scope "/transactions" do
+      get "/:id", TransactionController, :show
+      post "/start", TransactionController, :start
+      post "/process/:id", TransactionController, :process
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

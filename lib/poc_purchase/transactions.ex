@@ -35,7 +35,8 @@ defmodule PocPurchase.Transactions do
       ** (Ecto.NoResultsError)
 
   """
-  def get_transaction!(id), do: Repo.get!(Transaction, id) |> Repo.preload([:products])
+  # TODO: maybe its not the best place to do this
+  def get_transaction!(id), do: Repo.get!(Transaction, id) |> Repo.preload(:transaction_products)
 
   @doc """
   Creates a transaction.
