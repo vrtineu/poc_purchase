@@ -41,8 +41,8 @@ defmodule PocPurchaseWeb do
         formats: [:html, :json],
         layouts: [html: PocPurchaseWeb.Layouts]
 
+      use Gettext, backend: PocPurchaseWeb.Gettext
       import Plug.Conn
-      import PocPurchaseWeb.Gettext
 
       unquote(verified_routes())
     end
