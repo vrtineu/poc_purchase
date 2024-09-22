@@ -20,6 +20,6 @@ defmodule PocPurchase.Purchases.PaymentQueue do
     Logger.debug("Received events: #{inspect(events)}")
 
     Enum.each(events, &inspect/1)
-    {:noreply,  [], state}
+    {:noreply, [], state}
   end
 end
