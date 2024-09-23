@@ -2,6 +2,10 @@ defmodule PocPurchase.Purchases.TransactionProcessor do
   use GenStage
 
   alias PocPurchase.Orders.Order
+  alias PocPurchase.Products
+  alias PocPurchase.Products.Product
+  alias PocPurchase.Transactions
+  alias PocPurchase.Transactions.Transaction
 
   require Logger
 
@@ -36,7 +40,32 @@ defmodule PocPurchase.Purchases.TransactionProcessor do
     {:noreply, Enum.reverse(events), state}
   end
 
-  defp process_event(_event) do
+  defp process_event(%Transaction{} = transaction) do
+    products = put_internal_product_id(transaction.transaction_products)
+
+    {:ok, updated_transaction} =
+      Transactions.update_transaction(transaction, %{
+        transaction_products: Enum.map(products, &Map.from_struct/1)
+      })
+
+    create_order(updated_transaction)
+  end
+
+  defp put_internal_product_id(products) do
+    Enum.map(products, fn product ->
+      thirdparty_id = Map.get(product, :thirdparty_id)
+
+      case Products.get_product_by_thirdparty_id(thirdparty_id) do
+        nil ->
+          product
+
+        %Product{id: id} ->
+          Map.put(product, :product_id, id)
+      end
+    end)
+  end
+
+  defp create_order(_event) do
     # mocking for now
     {:ok, %Order{status: "pending", total_amount: Decimal.new(15)}}
   end

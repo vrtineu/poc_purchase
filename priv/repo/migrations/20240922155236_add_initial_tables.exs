@@ -20,6 +20,7 @@ defmodule PocPurchase.Repo.Migrations.AddInitialTables do
       add :quantity, :integer
       add :thirdparty_id, :string, null: false
       add :transaction_id, references(:transactions)
+      add :product_id, references(:products)
 
       timestamps(type: :utc_datetime)
     end

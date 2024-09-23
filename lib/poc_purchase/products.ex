@@ -38,6 +38,22 @@ defmodule PocPurchase.Products do
   def get_product!(id), do: Repo.get!(Product, id)
 
   @doc """
+  Gets a single product by thirdparty id.
+
+  ## Examples
+
+      iex> get_product_by_thirdparty_id("abc123")
+      %Product{}
+
+      iex> get_product_by_thirdparty_id("def456")
+      nil
+
+  """
+  def get_product_by_thirdparty_id(thirdparty_id) do
+    Repo.get_by(Product, thirdparty_id: thirdparty_id)
+  end
+
+  @doc """
   Creates a product.
 
   ## Examples
