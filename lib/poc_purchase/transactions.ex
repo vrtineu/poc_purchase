@@ -36,7 +36,13 @@ defmodule PocPurchase.Transactions do
 
   """
   # TODO: maybe its not the best place to do this
-  def get_transaction!(id), do: Repo.get!(Transaction, id) |> Repo.preload(:transaction_products)
+  def get_transaction!(id, opts \\ []) do
+    preloads = Keyword.get(opts, :preloads, [])
+
+    Transaction
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a transaction.

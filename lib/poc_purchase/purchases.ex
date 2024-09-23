@@ -18,7 +18,7 @@ defmodule PocPurchase.Purchases do
   end
 
   def init_processors(id, transaction_products_params) do
-    transaction = Transactions.get_transaction!(id)
+    transaction = Transactions.get_transaction!(id, preloads: [:transaction_products])
 
     if transaction_can_be_processed?(transaction) do
       Repo.transaction(fn ->

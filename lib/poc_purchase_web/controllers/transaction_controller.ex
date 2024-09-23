@@ -3,16 +3,18 @@ defmodule PocPurchaseWeb.TransactionController do
 
   alias PocPurchase.Purchases
   alias PocPurchase.Transactions
+  alias PocPurchase.Transactions.Transaction
 
   action_fallback PocPurchaseWeb.FallbackController
 
   def show(conn, %{"id" => id}) do
-    transaction = Transactions.get_transaction!(id)
+    transaction = Transactions.get_transaction!(id, preloads: [:transaction_products])
     render(conn, :show, transaction: transaction)
   end
 
   def start(conn, _params) do
-    with {:ok, transaction} <- Purchases.start_transaction() do
+    with {:ok, %Transaction{id: id}} <- Purchases.start_transaction(),
+         transaction <- Transactions.get_transaction!(id, preloads: [:transaction_products]) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/transactions/#{transaction}")
